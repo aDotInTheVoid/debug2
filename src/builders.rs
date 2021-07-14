@@ -138,16 +138,24 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 
     pub fn field(&mut self, name: &str, value: &dyn Debug) -> &mut Self {
         self.result = self.result.and_then(|_| {
-            if !self.has_fields {
-                self.fmt.write_str(" {\n")?;
+            if self.is_pretty() {
+                if !self.has_fields {
+                    self.fmt.write_str(" {\n")?;
+                }
+                let mut slot = None;
+                let mut state = Default::default();
+                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
+                writer.write_str(name)?;
+                writer.write_str(": ")?;
+                value.fmt(&mut writer)?;
+                writer.write_str(",\n")
+            } else {
+                let prefix = if self.has_fields { ", " } else { " { " };
+                self.fmt.write_str(prefix)?;
+                self.fmt.write_str(name)?;
+                self.fmt.write_str(": ")?;
+                value.fmt(self.fmt)
             }
-            let mut slot = None;
-            let mut state = Default::default();
-            let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-            writer.write_str(name)?;
-            writer.write_str(": ")?;
-            value.fmt(&mut writer)?;
-            writer.write_str(",\n")
         });
 
         self.has_fields = true;
@@ -184,11 +192,15 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     pub fn finish_non_exhaustive(&mut self) -> fmt::Result {
         self.result = self.result.and_then(|_| {
             if self.has_fields {
-                let mut slot = None;
-                let mut state = Default::default();
-                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-                writer.write_str("..\n")?;
-                self.fmt.write_str("}")
+                if self.is_pretty() {
+                    let mut slot = None;
+                    let mut state = Default::default();
+                    let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
+                    writer.write_str("..\n")?;
+                    self.fmt.write_str("}")
+                } else {
+                    self.fmt.write_str(", .. }")
+                }
             } else {
                 self.fmt.write_str(" { .. }")
             }
@@ -226,9 +238,21 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 
     pub fn finish(&mut self) -> fmt::Result {
         if self.has_fields {
-            self.result = self.result.and_then(|_| self.fmt.write_str("}"));
+            self.result = self.result.and_then(|_| {
+                if self.is_pretty() {
+                    self.fmt.write_str("}")
+                } else {
+                    self.fmt.write_str(" }")
+                }
+            });
         }
         self.result
+    }
+
+    fn is_pretty(&self) -> bool {
+        // self.fmt.alternate()
+
+        true
     }
 }
 
@@ -308,14 +332,20 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
 
     pub fn field(&mut self, value: &dyn Debug) -> &mut Self {
         self.result = self.result.and_then(|_| {
-            if self.fields == 0 {
-                self.fmt.write_str("(\n")?;
+            if self.is_pretty() {
+                if self.fields == 0 {
+                    self.fmt.write_str("(\n")?;
+                }
+                let mut slot = None;
+                let mut state = Default::default();
+                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
+                value.fmt(&mut writer)?;
+                writer.write_str(",\n")
+            } else {
+                let prefix = if self.fields == 0 { "(" } else { ", " };
+                self.fmt.write_str(prefix)?;
+                value.fmt(self.fmt)
             }
-            let mut slot = None;
-            let mut state = Default::default();
-            let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-            value.fmt(&mut writer)?;
-            writer.write_str(",\n")
         });
 
         self.fields += 1;
@@ -349,9 +379,20 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
 
     pub fn finish(&mut self) -> fmt::Result {
         if self.fields > 0 {
-            self.result = self.result.and_then(|_| self.fmt.write_str(")"));
+            self.result = self.result.and_then(|_| {
+                if self.fields == 1 && self.empty_name && !self.is_pretty() {
+                    self.fmt.write_str(",")?;
+                }
+                self.fmt.write_str(")")
+            });
         }
         self.result
+    }
+
+    fn is_pretty(&self) -> bool {
+        // TODO: Remove this
+        true
+        // self.fmt.alternate()
     }
 }
 
@@ -364,17 +405,29 @@ struct DebugInner<'a, 'b: 'a> {
 impl<'a, 'b: 'a> DebugInner<'a, 'b> {
     fn entry(&mut self, entry: &dyn Debug) {
         self.result = self.result.and_then(|_| {
-            if !self.has_fields {
-                self.fmt.write_str("\n")?;
+            if self.is_pretty() {
+                if !self.has_fields {
+                    self.fmt.write_str("\n")?;
+                }
+                let mut slot = None;
+                let mut state = Default::default();
+                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
+                entry.fmt(&mut writer)?;
+                writer.write_str(",\n")
+            } else {
+                if self.has_fields {
+                    self.fmt.write_str(", ")?
+                }
+                entry.fmt(self.fmt)
             }
-            let mut slot = None;
-            let mut state = Default::default();
-            let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-            entry.fmt(&mut writer)?;
-            writer.write_str(",\n")
         });
 
         self.has_fields = true;
+    }
+
+    fn is_pretty(&self) -> bool {
+        true
+        // self.fmt.alternate()
     }
 }
 
@@ -769,14 +822,22 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
                                     without completing the previous one"
             );
 
-            if !self.has_fields {
-                self.fmt.write_str("\n")?;
+            if self.is_pretty() {
+                if !self.has_fields {
+                    self.fmt.write_str("\n")?;
+                }
+                let mut slot = None;
+                self.state = Default::default();
+                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
+                key.fmt(&mut writer)?;
+                writer.write_str(": ")?;
+            } else {
+                if self.has_fields {
+                    self.fmt.write_str(", ")?
+                }
+                key.fmt(self.fmt)?;
+                self.fmt.write_str(": ")?;
             }
-            let mut slot = None;
-            self.state = Default::default();
-            let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-            key.fmt(&mut writer)?;
-            writer.write_str(": ")?;
 
             self.has_key = true;
             Ok(())
@@ -824,10 +885,14 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
                 "attempted to format a map value before its key"
             );
 
-            let mut slot = None;
-            let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-            value.fmt(&mut writer)?;
-            writer.write_str(",\n")?;
+            if self.is_pretty() {
+                let mut slot = None;
+                let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
+                value.fmt(&mut writer)?;
+                writer.write_str(",\n")?;
+            } else {
+                value.fmt(self.fmt)?;
+            }
 
             self.has_key = false;
             Ok(())
@@ -911,5 +976,10 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
 
             self.fmt.write_str("}")
         })
+    }
+
+    fn is_pretty(&self) -> bool {
+        // self.fmt.alternate()
+        true
     }
 }
