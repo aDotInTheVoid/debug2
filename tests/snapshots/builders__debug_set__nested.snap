@@ -4,9 +4,6 @@ expression: pprint(Bar)
 
 ---
 {
-    {
-        true,
-        "10/20",
-    },
+    {true, "10/20"},
     "world",
 }

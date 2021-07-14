@@ -1,6 +1,14 @@
 use crate::{Debug, Formatter};
 use std::fmt;
 
+struct Formatted(String);
+
+impl Debug for Formatted {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
 struct PadAdapter<'buf, 'state> {
     buf: &'buf mut (dyn fmt::Write + 'buf),
     state: &'state mut PadAdapterState,
@@ -106,6 +114,15 @@ pub(super) fn debug_struct_new<'a, 'b>(
     }
 }
 
+fn write_maybe_short<T: Debug + ?Sized>(val: &T, writer: &mut Formatter) -> fmt::Result {
+    let as_str = crate::flatprint_checked(val)?;
+    if as_str.len() <= 80 {
+        writer.buf.write_str(&as_str)
+    } else {
+        val.fmt(writer)
+    }
+}
+
 impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// Adds a new field to the generated struct output.
     ///
@@ -147,7 +164,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
                 let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
                 writer.write_str(name)?;
                 writer.write_str(": ")?;
-                value.fmt(&mut writer)?;
+                write_maybe_short(value, &mut writer)?;
                 writer.write_str(",\n")
             } else {
                 let prefix = if self.has_fields { ", " } else { " { " };
@@ -250,9 +267,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     }
 
     fn is_pretty(&self) -> bool {
-        // self.fmt.alternate()
-
-        true
+        self.fmt.is_pretty()
     }
 }
 
@@ -341,7 +356,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
                 let mut slot = None;
                 let mut state = Default::default();
                 let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-                value.fmt(&mut writer)?;
+                write_maybe_short(&value, &mut writer)?;
                 writer.write_str(",\n")
             } else {
                 let prefix = if self.fields == 0 { "(" } else { ", " };
@@ -392,9 +407,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     }
 
     fn is_pretty(&self) -> bool {
-        // TODO: Remove this
-        true
-        // self.fmt.alternate()
+        self.fmt.is_pretty()
     }
 }
 
@@ -414,7 +427,7 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
                 let mut slot = None;
                 let mut state = Default::default();
                 let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-                entry.fmt(&mut writer)?;
+                write_maybe_short(&entry, &mut writer)?;
                 writer.write_str(",\n")
             } else {
                 if self.has_fields {
@@ -428,8 +441,7 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
     }
 
     fn is_pretty(&self) -> bool {
-        true
-        // self.fmt.alternate()
+        self.fmt.is_pretty()
     }
 }
 
@@ -831,7 +843,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
                 let mut slot = None;
                 self.state = Default::default();
                 let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-                key.fmt(&mut writer)?;
+                write_maybe_short(&key, &mut writer)?;
                 writer.write_str(": ")?;
             } else {
                 if self.has_fields {
@@ -890,7 +902,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
             if self.is_pretty() {
                 let mut slot = None;
                 let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-                value.fmt(&mut writer)?;
+                write_maybe_short(value, &mut writer)?;
                 writer.write_str(",\n")?;
             } else {
                 value.fmt(self.fmt)?;
@@ -981,7 +993,6 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     }
 
     fn is_pretty(&self) -> bool {
-        // self.fmt.alternate()
-        true
+        self.fmt.is_pretty()
     }
 }

@@ -11,20 +11,37 @@ pub trait Debug {
 
 pub struct Formatter<'a> {
     buf: &'a mut (dyn Write + 'a),
+    mode: Mode,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Mode {
+    Pretty,
+    Flat,
+}
+
+fn flatprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
+    let mut out = String::new();
+    let mut f = Formatter {
+        buf: &mut out,
+        mode: Mode::Flat,
+    };
+    x.fmt(&mut f)?;
+    Ok(out)
 }
 
 pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
     let mut out = String::new();
-    let mut f = Formatter { buf: &mut out };
+    let mut f = Formatter {
+        buf: &mut out,
+        mode: Mode::Pretty,
+    };
     x.fmt(&mut f)?;
     Ok(out)
 }
 
 pub fn pprint<T: Debug>(x: T) -> String {
-    let mut out = String::new();
-    let mut f = Formatter { buf: &mut out };
-    x.fmt(&mut f).unwrap();
-    out
+    pprint_checked(x).unwrap()
 }
 
 impl<'a> Formatter<'a> {
@@ -220,12 +237,19 @@ impl<'a> Formatter<'a> {
         Formatter {
             // We want to change this
             buf: wrap(self.buf),
+
             // And preserve these
+                     mode: self.mode
+
             // flags: self.flags,
             // fill: self.fill,
             // align: self.align,
             // width: self.width,
             // precision: self.precision,
         }
+    }
+
+    fn is_pretty(&self) -> bool {
+        self.mode == Mode::Pretty
     }
 }
