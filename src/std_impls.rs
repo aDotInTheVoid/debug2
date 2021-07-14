@@ -34,33 +34,22 @@ impl<T: ?Sized + Debug> Debug for &mut T {
     }
 }
 
-impl<T: Debug> Debug for [T] {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_list().entries(self.iter()).finish()
-    }
+macro_rules! list_like {
+    ($($t:ty),+) => {
+        $(
+            impl<T: Debug> Debug for $t {
+                fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+                    f.debug_list().entries(self.iter()).finish()
+                }
+            }
+        )+
+    };
 }
 
-// TODO: Macro these
-impl<T: Debug> Debug for Vec<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_list().entries(self).finish()
-    }
+list_like! {
+    [T], Vec<T>, VecDeque<T>, LinkedList<T>, BinaryHeap<T>
 }
-impl<T: Debug> Debug for VecDeque<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_list().entries(self).finish()
-    }
-}
-impl<T: Debug> Debug for LinkedList<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_list().entries(self).finish()
-    }
-}
-impl<T: Debug> Debug for BinaryHeap<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_list().entries(self.iter()).finish()
-    }
-}
+
 impl<K, V, S> Debug for HashMap<K, V, S>
 where
     K: Debug,

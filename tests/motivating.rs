@@ -46,10 +46,6 @@ enum UnOp {
     Sqrt,
 }
 
-// TODO: Derive these
-// https://github.com/rust-lang/rust/blob/master/compiler/rustc_builtin_macros/src/deriving/debug.rs
-// https://github.com/panicbit/custom_debug/blob/master/custom_debug_derive/src/lib.rs
-
 #[test]
 fn quadratic_form() {
     let instrs = vec![
