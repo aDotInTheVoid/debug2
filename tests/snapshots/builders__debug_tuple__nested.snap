@@ -1,0 +1,9 @@
+---
+source: tests/builders.rs
+expression: pprint(Foo)
+
+---
+Foo(
+    true,
+    "10/20",
+)

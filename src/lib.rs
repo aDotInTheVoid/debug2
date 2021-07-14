@@ -1,4 +1,4 @@
-use std::fmt::{Debug as StdDebug, Result, Write};
+use std::fmt::{Debug as StdDebug, Error, Result, Write};
 
 mod builders;
 mod std_impls;
@@ -11,6 +11,20 @@ pub trait Debug {
 
 pub struct Formatter<'a> {
     buf: &'a mut (dyn Write + 'a),
+}
+
+pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
+    let mut out = String::new();
+    let mut f = Formatter { buf: &mut out };
+    x.fmt(&mut f)?;
+    Ok(out)
+}
+
+pub fn pprint<T: Debug>(x: T) -> String {
+    let mut out = String::new();
+    let mut f = Formatter { buf: &mut out };
+    x.fmt(&mut f).unwrap();
+    out
 }
 
 impl<'a> Formatter<'a> {

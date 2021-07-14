@@ -1,0 +1,15 @@
+---
+source: tests/builders.rs
+expression: pprint(Bar)
+
+---
+{
+    "foo": {
+        "bar": true,
+        10: "10/20",
+    },
+    {
+        "bar": true,
+        10: "10/20",
+    }: "world",
+}
