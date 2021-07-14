@@ -1,4 +1,4 @@
-use crate::{Debug, Formatter};
+use crate::{Debug2, Formatter2};
 use std::fmt;
 
 struct PadAdapter<'buf, 'state> {
@@ -18,10 +18,10 @@ impl Default for PadAdapterState {
 
 impl<'buf, 'state> PadAdapter<'buf, 'state> {
     fn wrap<'slot, 'fmt: 'buf + 'slot>(
-        fmt: &'fmt mut Formatter<'_>,
+        fmt: &'fmt mut Formatter2<'_>,
         slot: &'slot mut Option<Self>,
         state: &'state mut PadAdapterState,
-    ) -> Formatter<'slot> {
+    ) -> Formatter2<'slot> {
         fmt.wrap_buf(move |buf| {
             *slot = Some(PadAdapter { buf, state });
             slot.as_mut().unwrap()
@@ -89,13 +89,13 @@ impl fmt::Write for PadAdapter<'_, '_> {
 #[allow(missing_debug_implementations)]
 
 pub struct DebugStruct<'a, 'b: 'a> {
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     result: fmt::Result,
     has_fields: bool,
 }
 
 pub(super) fn debug_struct_new<'a, 'b>(
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     name: &str,
 ) -> DebugStruct<'a, 'b> {
     let result = fmt.write_str(name);
@@ -136,7 +136,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// );
     /// ```
 
-    pub fn field(&mut self, name: &str, value: &dyn Debug) -> &mut Self {
+    pub fn field(&mut self, name: &str, value: &dyn Debug2) -> &mut Self {
         self.result = self.result.and_then(|_| {
             if !self.has_fields {
                 self.fmt.write_str(" {\n")?;
@@ -146,7 +146,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
             let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
             writer.write_str(name)?;
             writer.write_str(": ")?;
-            value.fmt(&mut writer)?;
+            value.fmt2(&mut writer)?;
             writer.write_str(",\n")
         });
 
@@ -264,13 +264,13 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 #[allow(missing_debug_implementations)]
 
 pub struct DebugTuple<'a, 'b: 'a> {
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     result: fmt::Result,
     fields: usize,
 }
 
 pub(super) fn debug_tuple_new<'a, 'b>(
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     name: &str,
 ) -> DebugTuple<'a, 'b> {
     let result = fmt.write_str(name);
@@ -306,7 +306,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     /// );
     /// ```
 
-    pub fn field(&mut self, value: &dyn Debug) -> &mut Self {
+    pub fn field(&mut self, value: &dyn Debug2) -> &mut Self {
         self.result = self.result.and_then(|_| {
             if self.fields == 0 {
                 self.fmt.write_str("(\n")?;
@@ -314,7 +314,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
             let mut slot = None;
             let mut state = Default::default();
             let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-            value.fmt(&mut writer)?;
+            value.fmt2(&mut writer)?;
             writer.write_str(",\n")
         });
 
@@ -356,13 +356,13 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
 }
 
 struct DebugInner<'a, 'b: 'a> {
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     result: fmt::Result,
     has_fields: bool,
 }
 
 impl<'a, 'b: 'a> DebugInner<'a, 'b> {
-    fn entry(&mut self, entry: &dyn Debug) {
+    fn entry(&mut self, entry: &dyn Debug2) {
         self.result = self.result.and_then(|_| {
             if !self.has_fields {
                 self.fmt.write_str("\n")?;
@@ -370,7 +370,7 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
             let mut slot = None;
             let mut state = Default::default();
             let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut state);
-            entry.fmt(&mut writer)?;
+            entry.fmt2(&mut writer)?;
             writer.write_str(",\n")
         });
 
@@ -410,7 +410,7 @@ pub struct DebugSet<'a, 'b: 'a> {
     inner: DebugInner<'a, 'b>,
 }
 
-pub(super) fn debug_set_new<'a, 'b>(fmt: &'a mut Formatter<'b>) -> DebugSet<'a, 'b> {
+pub(super) fn debug_set_new<'a, 'b>(fmt: &'a mut Formatter2<'b>) -> DebugSet<'a, 'b> {
     let result = fmt.write_str("{");
     DebugSet {
         inner: DebugInner {
@@ -446,7 +446,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// );
     /// ```
 
-    pub fn entry(&mut self, entry: &dyn Debug) -> &mut Self {
+    pub fn entry(&mut self, entry: &dyn Debug2) -> &mut Self {
         self.inner.entry(entry);
         self
     }
@@ -477,7 +477,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
 
     pub fn entries<D, I>(&mut self, entries: I) -> &mut Self
     where
-        D: Debug,
+        D: Debug2,
         I: IntoIterator<Item = D>,
     {
         for entry in entries {
@@ -547,7 +547,7 @@ pub struct DebugList<'a, 'b: 'a> {
     inner: DebugInner<'a, 'b>,
 }
 
-pub(super) fn debug_list_new<'a, 'b>(fmt: &'a mut Formatter<'b>) -> DebugList<'a, 'b> {
+pub(super) fn debug_list_new<'a, 'b>(fmt: &'a mut Formatter2<'b>) -> DebugList<'a, 'b> {
     let result = fmt.write_str("[");
     DebugList {
         inner: DebugInner {
@@ -583,7 +583,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// );
     /// ```
 
-    pub fn entry(&mut self, entry: &dyn Debug) -> &mut Self {
+    pub fn entry(&mut self, entry: &dyn Debug2) -> &mut Self {
         self.inner.entry(entry);
         self
     }
@@ -614,7 +614,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
 
     pub fn entries<D, I>(&mut self, entries: I) -> &mut Self
     where
-        D: Debug,
+        D: Debug2,
         I: IntoIterator<Item = D>,
     {
         for entry in entries {
@@ -682,7 +682,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
 #[allow(missing_debug_implementations)]
 
 pub struct DebugMap<'a, 'b: 'a> {
-    fmt: &'a mut Formatter<'b>,
+    fmt: &'a mut Formatter2<'b>,
     result: fmt::Result,
     has_fields: bool,
     has_key: bool,
@@ -690,7 +690,7 @@ pub struct DebugMap<'a, 'b: 'a> {
     state: PadAdapterState,
 }
 
-pub(super) fn debug_map_new<'a, 'b>(fmt: &'a mut Formatter<'b>) -> DebugMap<'a, 'b> {
+pub(super) fn debug_map_new<'a, 'b>(fmt: &'a mut Formatter2<'b>) -> DebugMap<'a, 'b> {
     let result = fmt.write_str("{");
     DebugMap {
         fmt,
@@ -725,7 +725,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// );
     /// ```
 
-    pub fn entry(&mut self, key: &dyn Debug, value: &dyn Debug) -> &mut Self {
+    pub fn entry(&mut self, key: &dyn Debug2, value: &dyn Debug2) -> &mut Self {
         self.key(key).value(value)
     }
 
@@ -761,7 +761,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// );
     /// ```
 
-    pub fn key(&mut self, key: &dyn Debug) -> &mut Self {
+    pub fn key(&mut self, key: &dyn Debug2) -> &mut Self {
         self.result = self.result.and_then(|_| {
             assert!(
                 !self.has_key,
@@ -775,7 +775,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
             let mut slot = None;
             self.state = Default::default();
             let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-            key.fmt(&mut writer)?;
+            key.fmt2(&mut writer)?;
             writer.write_str(": ")?;
 
             self.has_key = true;
@@ -817,7 +817,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// );
     /// ```
 
-    pub fn value(&mut self, value: &dyn Debug) -> &mut Self {
+    pub fn value(&mut self, value: &dyn Debug2) -> &mut Self {
         self.result = self.result.and_then(|_| {
             assert!(
                 self.has_key,
@@ -826,7 +826,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
 
             let mut slot = None;
             let mut writer = PadAdapter::wrap(&mut self.fmt, &mut slot, &mut self.state);
-            value.fmt(&mut writer)?;
+            value.fmt2(&mut writer)?;
             writer.write_str(",\n")?;
 
             self.has_key = false;
@@ -864,8 +864,8 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
 
     pub fn entries<K, V, I>(&mut self, entries: I) -> &mut Self
     where
-        K: Debug,
-        V: Debug,
+        K: Debug2,
+        V: Debug2,
         I: IntoIterator<Item = (K, V)>,
     {
         for (k, v) in entries {

@@ -5,29 +5,29 @@ mod std_impls;
 
 pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 
-pub trait Debug {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result;
+pub trait Debug2 {
+    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result;
 }
 
-pub struct Formatter<'a> {
+pub struct Formatter2<'a> {
     buf: &'a mut (dyn Write + 'a),
 }
 
-pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
+pub fn pprint_checked<T: Debug2>(x: T) -> std::result::Result<String, Error> {
     let mut out = String::new();
-    let mut f = Formatter { buf: &mut out };
-    x.fmt(&mut f)?;
+    let mut f = Formatter2 { buf: &mut out };
+    x.fmt2(&mut f)?;
     Ok(out)
 }
 
-pub fn pprint<T: Debug>(x: T) -> String {
+pub fn pprint<T: Debug2>(x: T) -> String {
     let mut out = String::new();
-    let mut f = Formatter { buf: &mut out };
-    x.fmt(&mut f).unwrap();
+    let mut f = Formatter2 { buf: &mut out };
+    x.fmt2(&mut f).unwrap();
     out
 }
 
-impl<'a> Formatter<'a> {
+impl<'a> Formatter2<'a> {
     pub fn write_debug<T: StdDebug>(&mut self, val: &T) -> Result {
         write!(self.buf, "{:?}", val)
     }
@@ -211,13 +211,13 @@ impl<'a> Formatter<'a> {
     }
 }
 
-impl<'a> Formatter<'a> {
-    fn wrap_buf<'b, 'c, F>(&'b mut self, wrap: F) -> Formatter<'c>
+impl<'a> Formatter2<'a> {
+    fn wrap_buf<'b, 'c, F>(&'b mut self, wrap: F) -> Formatter2<'c>
     where
         'b: 'c,
         F: FnOnce(&'b mut (dyn Write + 'b)) -> &'c mut (dyn Write + 'c),
     {
-        Formatter {
+        Formatter2 {
             // We want to change this
             buf: wrap(self.buf),
             // And preserve these

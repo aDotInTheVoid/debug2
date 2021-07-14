@@ -46,16 +46,16 @@ enum UnOp {
     Sqrt,
 }
 
-impl debug2::Debug for UnOp {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
+impl debug2::Debug2 for UnOp {
+    fn fmt2(&self, f: &mut debug2::Formatter2<'_>) -> std::fmt::Result {
         match self {
             UnOp::Minus => f.debug_tuple("Minus").finish(),
             UnOp::Sqrt => f.debug_tuple("Sqrt").finish(),
         }
     }
 }
-impl debug2::Debug for BinOp {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
+impl debug2::Debug2 for BinOp {
+    fn fmt2(&self, f: &mut debug2::Formatter2<'_>) -> std::fmt::Result {
         match self {
             BinOp::Div => f.debug_tuple("Div").finish(),
             BinOp::Mul => f.debug_tuple("Mul").finish(),
@@ -65,8 +65,8 @@ impl debug2::Debug for BinOp {
         }
     }
 }
-impl debug2::Debug for Instr {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
+impl debug2::Debug2 for Instr {
+    fn fmt2(&self, f: &mut debug2::Formatter2<'_>) -> std::fmt::Result {
         match self {
             Instr::Push(v) => f.debug_tuple("Push").field(v).finish(),
             Instr::Load(v) => f.debug_tuple("Load").field(v).finish(),
