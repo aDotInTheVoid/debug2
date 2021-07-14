@@ -25,14 +25,12 @@ fn complex() {
     check!(complex_structure);
 }
 
-#[derive(Debug)]
 enum Instr {
     Push(i32),
     Load(&'static str),
     BinOp(BinOp),
     UnOp(UnOp),
 }
-#[derive(Debug)]
 enum BinOp {
     Div,
     Mul,
@@ -40,11 +38,14 @@ enum BinOp {
     Pow,
     PlusMinus,
 }
-#[derive(Debug)]
 enum UnOp {
     Minus,
     Sqrt,
 }
+
+// TODO: Derive these
+// https://github.com/rust-lang/rust/blob/master/compiler/rustc_builtin_macros/src/deriving/debug.rs
+// https://github.com/panicbit/custom_debug/blob/master/custom_debug_derive/src/lib.rs
 
 impl debug2::Debug for UnOp {
     fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
@@ -97,7 +98,5 @@ fn quadratic_form() {
         Instr::BinOp(BinOp::Div),
     ];
 
-    assert_snapshot!(format!("{:?}", instrs));
-    assert_snapshot!(format!("{:#?}", instrs));
     assert_snapshot!(pprint(instrs));
 }

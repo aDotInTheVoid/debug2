@@ -114,8 +114,11 @@ pub(super) fn debug_struct_new<'a, 'b>(
     }
 }
 
+// This is the crux of the problem
 fn write_maybe_short<T: Debug + ?Sized>(val: &T, writer: &mut Formatter) -> fmt::Result {
+    // TODO: Early return this if we run out of space
     let as_str = crate::flatprint_checked(val)?;
+    // TODO: Make this configurable and keep track of current depth.
     if as_str.len() <= 80 {
         writer.buf.write_str(&as_str)
     } else {
