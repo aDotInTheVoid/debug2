@@ -267,7 +267,6 @@ pub struct DebugTuple<'a, 'b: 'a> {
     fmt: &'a mut Formatter<'b>,
     result: fmt::Result,
     fields: usize,
-    empty_name: bool,
 }
 
 pub(super) fn debug_tuple_new<'a, 'b>(
@@ -279,7 +278,6 @@ pub(super) fn debug_tuple_new<'a, 'b>(
         fmt,
         result,
         fields: 0,
-        empty_name: name.is_empty(),
     }
 }
 
