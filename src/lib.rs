@@ -5,6 +5,8 @@ mod std_impls;
 
 pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 
+pub use derive::*;
+
 pub trait Debug {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result;
 }
@@ -14,7 +16,7 @@ pub struct Formatter<'a> {
     mode: Mode,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum Mode {
     Pretty,
     Flat,

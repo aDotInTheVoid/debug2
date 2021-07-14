@@ -1,4 +1,4 @@
-use debug2::pprint;
+use debug2::{pprint, Debug};
 
 use insta::assert_snapshot;
 
@@ -25,12 +25,14 @@ fn complex() {
     check!(complex_structure);
 }
 
+#[derive(Debug)]
 enum Instr {
     Push(i32),
     Load(&'static str),
     BinOp(BinOp),
     UnOp(UnOp),
 }
+#[derive(Debug)]
 enum BinOp {
     Div,
     Mul,
@@ -38,6 +40,7 @@ enum BinOp {
     Pow,
     PlusMinus,
 }
+#[derive(Debug)]
 enum UnOp {
     Minus,
     Sqrt,
@@ -46,36 +49,6 @@ enum UnOp {
 // TODO: Derive these
 // https://github.com/rust-lang/rust/blob/master/compiler/rustc_builtin_macros/src/deriving/debug.rs
 // https://github.com/panicbit/custom_debug/blob/master/custom_debug_derive/src/lib.rs
-
-impl debug2::Debug for UnOp {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            UnOp::Minus => f.debug_tuple("Minus").finish(),
-            UnOp::Sqrt => f.debug_tuple("Sqrt").finish(),
-        }
-    }
-}
-impl debug2::Debug for BinOp {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            BinOp::Div => f.debug_tuple("Div").finish(),
-            BinOp::Mul => f.debug_tuple("Mul").finish(),
-            BinOp::Minus => f.debug_tuple("Minus").finish(),
-            BinOp::Pow => f.debug_tuple("Pow").finish(),
-            BinOp::PlusMinus => f.debug_tuple("PlusMinus").finish(),
-        }
-    }
-}
-impl debug2::Debug for Instr {
-    fn fmt(&self, f: &mut debug2::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Instr::Push(v) => f.debug_tuple("Push").field(v).finish(),
-            Instr::Load(v) => f.debug_tuple("Load").field(v).finish(),
-            Instr::BinOp(v) => f.debug_tuple("BinOp").field(v).finish(),
-            Instr::UnOp(v) => f.debug_tuple("UnOp").field(v).finish(),
-        }
-    }
-}
 
 #[test]
 fn quadratic_form() {

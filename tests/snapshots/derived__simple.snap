@@ -1,0 +1,9 @@
+---
+source: tests/derived.rs
+expression: pprint(x)
+
+---
+X {
+    a: 1,
+    b: 5,
+}
