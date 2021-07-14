@@ -1,0 +1,6 @@
+---
+source: tests/motivating.rs
+expression: "format!(\"{:?}\", instrs)"
+
+---
+[Load("b"), UnOp(Minus), Load("b"), Push(2), BinOp(Pow), Load("a"), Load("c"), Push(4), BinOp(Mul), BinOp(Mul), BinOp(Minus), UnOp(Sqrt), BinOp(PlusMinus), Load("a"), Push(2), BinOp(Div)]

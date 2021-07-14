@@ -1,3 +1,4 @@
+use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, LinkedList, VecDeque};
 use std::ops::Deref;
 
 use crate::{Debug, Formatter, Result};
@@ -35,6 +36,66 @@ impl<T: ?Sized + Debug> Debug for &mut T {
 impl<T: Debug> Debug for [T] {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self.iter()).finish()
+    }
+}
+
+// TODO: Macro these
+impl<T: Debug> Debug for Vec<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self).finish()
+    }
+}
+impl<T: Debug> Debug for VecDeque<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self).finish()
+    }
+}
+impl<T: Debug> Debug for LinkedList<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self).finish()
+    }
+}
+impl<T: Debug> Debug for BinaryHeap<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self.iter()).finish()
+    }
+}
+impl<K, V, S> Debug for HashMap<K, V, S>
+where
+    K: Debug,
+    V: Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_map().entries(self.iter()).finish()
+    }
+}
+impl<K: Debug, V: Debug> Debug for BTreeMap<K, V> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_map().entries(self.iter()).finish()
+    }
+}
+impl<T, S> Debug for HashSet<T, S>
+where
+    T: Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_set().entries(self.iter()).finish()
+    }
+}
+impl<T> Debug for BTreeSet<T>
+where
+    T: Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_set().entries(self.iter()).finish()
+    }
+}
+impl<T: Debug> Debug for Option<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        match self {
+            Some(v) => f.debug_tuple("Some").field(v).finish(),
+            None => f.debug_tuple("None").finish(),
+        }
     }
 }
 
