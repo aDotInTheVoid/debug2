@@ -1,13 +1,13 @@
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, LinkedList, VecDeque};
 use std::ops::Deref;
 
-use crate::{Debug2, Formatter2, Result};
+use crate::{Debug, Formatter, Result};
 
 macro_rules! std_debug {
     ($($t:ty),+) => {
         $(
-            impl Debug2 for $t {
-                fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+            impl Debug for $t {
+                fn fmt(&self, f: &mut Formatter<'_>) -> Result {
                     f.write_debug(self)
                 }
             }
@@ -21,77 +21,77 @@ std_debug! {
     f32, f64
 }
 
-impl<T: ?Sized + Debug2> Debug2 for &T {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
-        Debug2::fmt2(&**self, f)
+impl<T: ?Sized + Debug> Debug for &T {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
     }
 }
 
-impl<T: ?Sized + Debug2> Debug2 for &mut T {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
-        Debug2::fmt2(&**self, f)
+impl<T: ?Sized + Debug> Debug for &mut T {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
     }
 }
 
-impl<T: Debug2> Debug2 for [T] {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for [T] {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self.iter()).finish()
     }
 }
 
 // TODO: Macro these
-impl<T: Debug2> Debug2 for Vec<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for Vec<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self).finish()
     }
 }
-impl<T: Debug2> Debug2 for VecDeque<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for VecDeque<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self).finish()
     }
 }
-impl<T: Debug2> Debug2 for LinkedList<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for LinkedList<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self).finish()
     }
 }
-impl<T: Debug2> Debug2 for BinaryHeap<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for BinaryHeap<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self.iter()).finish()
     }
 }
-impl<K, V, S> Debug2 for HashMap<K, V, S>
+impl<K, V, S> Debug for HashMap<K, V, S>
 where
-    K: Debug2,
-    V: Debug2,
+    K: Debug,
+    V: Debug,
 {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_map().entries(self.iter()).finish()
     }
 }
-impl<K: Debug2, V: Debug2> Debug2 for BTreeMap<K, V> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<K: Debug, V: Debug> Debug for BTreeMap<K, V> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_map().entries(self.iter()).finish()
     }
 }
-impl<T, S> Debug2 for HashSet<T, S>
+impl<T, S> Debug for HashSet<T, S>
 where
-    T: Debug2,
+    T: Debug,
 {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_set().entries(self.iter()).finish()
     }
 }
-impl<T> Debug2 for BTreeSet<T>
+impl<T> Debug for BTreeSet<T>
 where
-    T: Debug2,
+    T: Debug,
 {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_set().entries(self.iter()).finish()
     }
 }
-impl<T: Debug2> Debug2 for Option<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Debug> Debug for Option<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         match self {
             Some(v) => f.debug_tuple("Some").field(v).finish(),
             None => f.debug_tuple("None").finish(),
@@ -108,9 +108,9 @@ macro_rules! peel {
 macro_rules! tuple {
     () => ();
     ( $($name:ident,)+ ) => (
-        impl<$($name:Debug2),+> Debug2 for ($($name,)+) where last_type!($($name,)+): ?Sized {
+        impl<$($name:Debug),+> Debug for ($($name,)+) where last_type!($($name,)+): ?Sized {
             #[allow(non_snake_case, unused_assignments)]
-            fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+            fn fmt(&self, f: &mut Formatter<'_>) -> Result {
                 let mut builder = f.debug_tuple("");
                 let ($(ref $name,)+) = *self;
                 $(
@@ -131,20 +131,20 @@ macro_rules! last_type {
 
 tuple! { T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, }
 
-impl<T: ?Sized> Debug2 for std::marker::PhantomData<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: ?Sized> Debug for std::marker::PhantomData<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_struct("PhantomData").finish()
     }
 }
 
-impl<T: Copy + Debug2> Debug2 for std::cell::Cell<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: Copy + Debug> Debug for std::cell::Cell<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_struct("Cell").field("value", &self.get()).finish()
     }
 }
 
-impl<T: ?Sized + Debug2> Debug2 for std::cell::RefCell<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: ?Sized + Debug> Debug for std::cell::RefCell<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         match self.try_borrow() {
             Ok(borrow) => f.debug_struct("RefCell").field("value", &borrow).finish(),
             Err(_) => {
@@ -152,8 +152,8 @@ impl<T: ?Sized + Debug2> Debug2 for std::cell::RefCell<T> {
                 // here. Show a placeholder instead.
                 struct BorrowedPlaceholder;
 
-                impl Debug2 for BorrowedPlaceholder {
-                    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+                impl Debug for BorrowedPlaceholder {
+                    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
                         f.write_str("<borrowed>")
                     }
                 }
@@ -166,20 +166,20 @@ impl<T: ?Sized + Debug2> Debug2 for std::cell::RefCell<T> {
     }
 }
 
-impl<T: ?Sized + Debug2> Debug2 for std::cell::Ref<'_, T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
-        Debug2::fmt2(&**self, f)
+impl<T: ?Sized + Debug> Debug for std::cell::Ref<'_, T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
     }
 }
 
-impl<T: ?Sized + Debug2> Debug2 for std::cell::RefMut<'_, T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
-        Debug2::fmt2(&*(self.deref()), f)
+impl<T: ?Sized + Debug> Debug for std::cell::RefMut<'_, T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&*(self.deref()), f)
     }
 }
 
-impl<T: ?Sized> Debug2 for std::cell::UnsafeCell<T> {
-    fn fmt2(&self, f: &mut Formatter2<'_>) -> Result {
+impl<T: ?Sized> Debug for std::cell::UnsafeCell<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_struct("UnsafeCell").finish_non_exhaustive()
     }
 }

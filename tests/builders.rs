@@ -1,4 +1,4 @@
-use debug2::{pprint, Debug2, Formatter2};
+use debug2::{pprint, Debug, Formatter};
 use std::fmt::Result;
 
 use insta::assert_snapshot;
@@ -16,8 +16,8 @@ mod debug_struct {
     fn test_empty() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo").finish()
             }
         }
@@ -29,8 +29,8 @@ mod debug_struct {
     fn test_single() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo").field("bar", &true).finish()
             }
         }
@@ -42,8 +42,8 @@ mod debug_struct {
     fn test_multiple() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo")
                     .field("bar", &true)
                     .field("baz", &format!("{}/{}", 10, 20))
@@ -58,8 +58,8 @@ mod debug_struct {
     fn test_nested() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo")
                     .field("bar", &true)
                     .field("baz", &format!("{}/{}", 10, 20))
@@ -69,8 +69,8 @@ mod debug_struct {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Bar")
                     .field("foo", &Foo)
                     .field("hello", &"world")
@@ -85,8 +85,8 @@ mod debug_struct {
     fn test_only_non_exhaustive() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo").finish_non_exhaustive()
             }
         }
@@ -98,8 +98,8 @@ mod debug_struct {
     fn test_multiple_and_non_exhaustive() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo")
                     .field("bar", &true)
                     .field("baz", &format!("{}/{}", 10, 20))
@@ -114,8 +114,8 @@ mod debug_struct {
     fn test_nested_non_exhaustive() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Foo")
                     .field("bar", &true)
                     .field("baz", &format!("{}/{}", 10, 20))
@@ -125,8 +125,8 @@ mod debug_struct {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_struct("Bar")
                     .field("foo", &Foo)
                     .field("hello", &"world")
@@ -145,8 +145,8 @@ mod debug_tuple {
     fn test_empty() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_tuple("Foo").finish()
             }
         }
@@ -158,8 +158,8 @@ mod debug_tuple {
     fn test_single() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_tuple("Foo").field(&true).finish()
             }
         }
@@ -171,8 +171,8 @@ mod debug_tuple {
     fn test_multiple() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_tuple("Foo")
                     .field(&true)
                     .field(&format!("{}/{}", 10, 20))
@@ -187,8 +187,8 @@ mod debug_tuple {
     fn test_nested() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_tuple("Foo")
                     .field(&true)
                     .field(&format!("{}/{}", 10, 20))
@@ -198,8 +198,8 @@ mod debug_tuple {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_tuple("Bar").field(&Foo).field(&"world").finish()
             }
         }
@@ -217,8 +217,8 @@ mod debug_map {
     fn test_empty() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().finish()
             }
         }
@@ -230,16 +230,16 @@ mod debug_map {
     fn test_single() {
         struct Entry;
 
-        impl Debug2 for Entry {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Entry {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().entry(&"bar", &true).finish()
             }
         }
 
         struct KeyValue;
 
-        impl Debug2 for KeyValue {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for KeyValue {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().key(&"bar").value(&true).finish()
             }
         }
@@ -252,8 +252,8 @@ mod debug_map {
     fn test_multiple() {
         struct Entry;
 
-        impl Debug2 for Entry {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Entry {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map()
                     .entry(&"bar", &true)
                     .entry(&10, &format!("{}/{}", 10, 20))
@@ -263,8 +263,8 @@ mod debug_map {
 
         struct KeyValue;
 
-        impl Debug2 for KeyValue {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for KeyValue {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map()
                     .key(&"bar")
                     .value(&true)
@@ -282,8 +282,8 @@ mod debug_map {
     fn test_nested() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map()
                     .entry(&"bar", &true)
                     .entry(&10, &format!("{}/{}", 10, 20))
@@ -293,8 +293,8 @@ mod debug_map {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map()
                     .entry(&"foo", &Foo)
                     .entry(&Foo, &"world")
@@ -312,20 +312,20 @@ mod debug_map {
         struct ErrorFmt;
         use std::fmt::Error;
 
-        impl Debug2 for ErrorFmt {
-            fn fmt2(&self, _: &mut Formatter2<'_>) -> Result {
+        impl Debug for ErrorFmt {
+            fn fmt(&self, _: &mut Formatter<'_>) -> Result {
                 Err(Error)
             }
         }
 
         struct KeyValue<K, V>(usize, K, V);
 
-        impl<K, V> Debug2 for KeyValue<K, V>
+        impl<K, V> Debug for KeyValue<K, V>
         where
-            K: Debug2,
-            V: Debug2,
+            K: Debug,
+            V: Debug,
         {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 let mut map = fmt.debug_map();
 
                 for _ in 0..self.0 {
@@ -348,8 +348,8 @@ mod debug_map {
     fn test_invalid_key_when_entry_is_incomplete() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().key(&"bar").key(&"invalid").finish()
             }
         }
@@ -362,8 +362,8 @@ mod debug_map {
     fn test_invalid_finish_incomplete_entry() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().key(&"bar").finish()
             }
         }
@@ -376,8 +376,8 @@ mod debug_map {
     fn test_invalid_value_before_key() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_map().value(&"invalid").key(&"bar").finish()
             }
         }
@@ -393,8 +393,8 @@ mod debug_set {
     fn test_empty() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_set().finish()
             }
         }
@@ -406,8 +406,8 @@ mod debug_set {
     fn test_single() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_set().entry(&true).finish()
             }
         }
@@ -419,8 +419,8 @@ mod debug_set {
     fn test_multiple() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_set()
                     .entry(&true)
                     .entry(&format!("{}/{}", 10, 20))
@@ -435,8 +435,8 @@ mod debug_set {
     fn test_nested() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_set()
                     .entry(&true)
                     .entry(&format!("{}/{}", 10, 20))
@@ -446,8 +446,8 @@ mod debug_set {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_set().entry(&Foo).entry(&"world").finish()
             }
         }
@@ -463,8 +463,8 @@ mod debug_list {
     fn test_empty() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_list().finish()
             }
         }
@@ -476,8 +476,8 @@ mod debug_list {
     fn test_single() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_list().entry(&true).finish()
             }
         }
@@ -489,8 +489,8 @@ mod debug_list {
     fn test_multiple() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_list()
                     .entry(&true)
                     .entry(&format!("{}/{}", 10, 20))
@@ -505,8 +505,8 @@ mod debug_list {
     fn test_nested() {
         struct Foo;
 
-        impl Debug2 for Foo {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Foo {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_list()
                     .entry(&true)
                     .entry(&format!("{}/{}", 10, 20))
@@ -516,8 +516,8 @@ mod debug_list {
 
         struct Bar;
 
-        impl Debug2 for Bar {
-            fn fmt2(&self, fmt: &mut Formatter2<'_>) -> Result {
+        impl Debug for Bar {
+            fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
                 fmt.debug_list().entry(&Foo).entry(&"world").finish()
             }
         }
