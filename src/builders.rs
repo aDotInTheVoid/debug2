@@ -72,8 +72,8 @@ impl fmt::Write for PadAdapter<'_, '_> {
 /// # Examples
 ///
 /// ```rust
+/// use debug2::{pprint, Debug, Formatter};
 /// use std::fmt;
-/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo {
 ///     bar: i32,
@@ -83,14 +83,17 @@ impl fmt::Write for PadAdapter<'_, '_> {
 /// impl Debug for Foo {
 ///     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
 ///         fmt.debug_struct("Foo")
-///            .field("bar", &self.bar)
-///            .field("baz", &self.baz)
-///            .finish()
+///             .field("bar", &self.bar)
+///             .field("baz", &self.baz)
+///             .finish()
 ///     }
 /// }
 ///
 /// assert_eq!(
-///     pprint( Foo { bar: 10, baz: "Hello World".to_string() }),
+///     pprint(Foo {
+///         bar: 10,
+///         baz: "Hello World".to_string()
+///     }),
 ///     "Foo { bar: 10, baz: \"Hello World\" }",
 /// );
 /// ```
@@ -133,8 +136,8 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -144,16 +147,19 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// impl Debug for Bar {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_struct("Bar")
-    ///            .field("bar", &self.bar) // We add `bar` field.
-    ///            .field("another", &self.another) // We add `another` field.
-    ///            // We even add a field which doesn't exist (because why not?).
-    ///            .field("not_existing_field", &1)
-    ///            .finish() // We're good to go!
+    ///             .field("bar", &self.bar) // We add `bar` field.
+    ///             .field("another", &self.another) // We add `another` field.
+    ///             // We even add a field which doesn't exist (because why not?).
+    ///             .field("not_existing_field", &1)
+    ///             .finish() // We're good to go!
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Bar { bar: 10, another: "Hello World".to_string() }),
+    ///     pprint(Bar {
+    ///         bar: 10,
+    ///         another: "Hello World".to_string()
+    ///     }),
     ///     "Bar { bar: 10, another: \"Hello World\", not_existing_field: 1 }",
     /// );
     /// ```
@@ -190,8 +196,8 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -201,13 +207,16 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// impl Debug for Bar {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_struct("Bar")
-    ///            .field("bar", &self.bar)
-    ///            .finish_non_exhaustive() // Show that some other field(s) exist.
+    ///             .field("bar", &self.bar)
+    ///             .finish_non_exhaustive() // Show that some other field(s) exist.
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Bar { bar: 10, hidden: 1.0 }),
+    ///     pprint(Bar {
+    ///         bar: 10,
+    ///         hidden: 1.0
+    ///     }),
     ///     "Bar { bar: 10, .. }",
     /// );
     /// ```
@@ -236,8 +245,8 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -247,15 +256,18 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// impl Debug for Bar {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_struct("Bar")
-    ///            .field("bar", &self.bar)
-    ///            .field("baz", &self.baz)
-    ///            .finish() // You need to call it to "finish" the
-    ///                      // struct formatting.
+    ///             .field("bar", &self.bar)
+    ///             .field("baz", &self.baz)
+    ///             .finish() // You need to call it to "finish" the
+    ///                       // struct formatting.
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Bar { bar: 10, baz: "Hello World".to_string() }),
+    ///     pprint(Bar {
+    ///         bar: 10,
+    ///         baz: "Hello World".to_string()
+    ///     }),
     ///     "Bar { bar: 10, baz: \"Hello World\" }",
     /// );
     /// ```
@@ -288,22 +300,22 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 /// # Examples
 ///
 /// ```rust
+/// use debug2::{pprint, Debug, Formatter};
 /// use std::fmt;
-/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(i32, String);
 ///
 /// impl Debug for Foo {
 ///     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
 ///         fmt.debug_tuple("Foo")
-///            .field(&self.0)
-///            .field(&self.1)
-///            .finish()
+///             .field(&self.0)
+///             .field(&self.1)
+///             .finish()
 ///     }
 /// }
 ///
 /// assert_eq!(
-///     pprint( Foo(10, "Hello World".to_string())),
+///     pprint(Foo(10, "Hello World".to_string())),
 ///     "Foo(10, \"Hello World\")",
 /// );
 /// ```
@@ -336,22 +348,22 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(i32, String);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_tuple("Foo")
-    ///            .field(&self.0) // We add the first field.
-    ///            .field(&self.1) // We add the second field.
-    ///            .finish() // We're good to go!
+    ///             .field(&self.0) // We add the first field.
+    ///             .field(&self.1) // We add the second field.
+    ///             .finish() // We're good to go!
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(10, "Hello World".to_string())),
+    ///     pprint(Foo(10, "Hello World".to_string())),
     ///     "Foo(10, \"Hello World\")",
     /// );
     /// ```
@@ -383,23 +395,23 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(i32, String);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_tuple("Foo")
-    ///            .field(&self.0)
-    ///            .field(&self.1)
-    ///            .finish() // You need to call it to "finish" the
-    ///                      // tuple formatting.
+    ///             .field(&self.0)
+    ///             .field(&self.1)
+    ///             .finish() // You need to call it to "finish" the
+    ///                       // tuple formatting.
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(10, "Hello World".to_string())),
+    ///     pprint(Foo(10, "Hello World".to_string())),
     ///     "Foo(10, \"Hello World\")",
     /// );
     /// ```
@@ -465,8 +477,8 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
 /// # Examples
 ///
 /// ```rust
+/// use debug2::{pprint, Debug, Formatter};
 /// use std::fmt;
-/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<i32>);
 ///
@@ -476,10 +488,7 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
 ///     }
 /// }
 ///
-/// assert_eq!(
-///     pprint( Foo(vec![10, 11])),
-///     "{10, 11}",
-/// );
+/// assert_eq!(pprint(Foo(vec![10, 11])), "{10, 11}",);
 /// ```
 #[must_use = "must eventually call `finish()` on Debug builders"]
 #[allow(missing_debug_implementations)]
@@ -505,22 +514,22 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_set()
-    ///            .entry(&self.0) // Adds the first "entry".
-    ///            .entry(&self.1) // Adds the second "entry".
-    ///            .finish()
+    ///             .entry(&self.0) // Adds the first "entry".
+    ///             .entry(&self.1) // Adds the second "entry".
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint(Foo(vec![10, 11], vec![12, 13])),
     ///     "{[10, 11], [12, 13]}",
     /// );
     /// ```
@@ -535,24 +544,21 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_set()
-    ///            .entries(self.0.iter()) // Adds the first "entry".
-    ///            .entries(self.1.iter()) // Adds the second "entry".
-    ///            .finish()
+    ///             .entries(self.0.iter()) // Adds the first "entry".
+    ///             .entries(self.1.iter()) // Adds the second "entry".
+    ///             .finish()
     ///     }
     /// }
     ///
-    /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
-    ///     "{10, 11, 12, 13}",
-    /// );
+    /// assert_eq!(pprint(Foo(vec![10, 11], vec![12, 13])), "{10, 11, 12, 13}",);
     /// ```
 
     pub fn entries<D, I>(&mut self, entries: I) -> &mut Self
@@ -571,23 +577,18 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
-    ///         fmt.debug_set()
-    ///            .entries(self.0.iter())
-    ///            .finish() // Ends the struct formatting.
+    ///         fmt.debug_set().entries(self.0.iter()).finish() // Ends the struct formatting.
     ///     }
     /// }
     ///
-    /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11])),
-    ///     "{10, 11}",
-    /// );
+    /// assert_eq!(pprint(Foo(vec![10, 11])), "{10, 11}",);
     /// ```
 
     pub fn finish(&mut self) -> fmt::Result {
@@ -607,8 +608,8 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
 /// # Examples
 ///
 /// ```rust
+/// use debug2::{pprint, Debug, Formatter};
 /// use std::fmt;
-/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<i32>);
 ///
@@ -618,10 +619,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
 ///     }
 /// }
 ///
-/// assert_eq!(
-///     pprint( Foo(vec![10, 11])),
-///     "[10, 11]",
-/// );
+/// assert_eq!(pprint(Foo(vec![10, 11])), "[10, 11]",);
 /// ```
 #[must_use = "must eventually call `finish()` on Debug builders"]
 #[allow(missing_debug_implementations)]
@@ -646,22 +644,22 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_list()
-    ///            .entry(&self.0) // We add the first "entry".
-    ///            .entry(&self.1) // We add the second "entry".
-    ///            .finish()
+    ///             .entry(&self.0) // We add the first "entry".
+    ///             .entry(&self.1) // We add the second "entry".
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint(Foo(vec![10, 11], vec![12, 13])),
     ///     "[[10, 11], [12, 13]]",
     /// );
     /// ```
@@ -676,24 +674,21 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_list()
-    ///            .entries(self.0.iter())
-    ///            .entries(self.1.iter())
-    ///            .finish()
+    ///             .entries(self.0.iter())
+    ///             .entries(self.1.iter())
+    ///             .finish()
     ///     }
     /// }
     ///
-    /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
-    ///     "[10, 11, 12, 13]",
-    /// );
+    /// assert_eq!(pprint(Foo(vec![10, 11], vec![12, 13])), "[10, 11, 12, 13]",);
     /// ```
 
     pub fn entries<D, I>(&mut self, entries: I) -> &mut Self
@@ -712,23 +707,18 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
-    ///         fmt.debug_list()
-    ///            .entries(self.0.iter())
-    ///            .finish() // Ends the struct formatting.
+    ///         fmt.debug_list().entries(self.0.iter()).finish() // Ends the struct formatting.
     ///     }
     /// }
     ///
-    /// assert_eq!(
-    ///     pprint( Foo(vec![10, 11])),
-    ///     "[10, 11]",
-    /// );
+    /// assert_eq!(pprint(Foo(vec![10, 11])), "[10, 11]",);
     /// ```
 
     pub fn finish(&mut self) -> fmt::Result {
@@ -748,19 +738,21 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
 /// # Examples
 ///
 /// ```rust
+/// use debug2::{pprint, Debug, Formatter};
 /// use std::fmt;
-/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<(String, i32)>);
 ///
 /// impl Debug for Foo {
 ///     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-///         fmt.debug_map().entries(self.0.iter().map(|&(ref k, ref v)| (k, v))).finish()
+///         fmt.debug_map()
+///             .entries(self.0.iter().map(|&(ref k, ref v)| (k, v)))
+///             .finish()
 ///     }
 /// }
 ///
 /// assert_eq!(
-///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
 ///     "{\"A\": 10, \"B\": 11}",
 /// );
 /// ```
@@ -793,21 +785,21 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_map()
-    ///            .entry(&"whole", &self.0) // We add the "whole" entry.
-    ///            .finish()
+    ///             .entry(&"whole", &self.0) // We add the "whole" entry.
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -830,21 +822,22 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_map()
-    ///            .key(&"whole").value(&self.0) // We add the "whole" entry.
-    ///            .finish()
+    ///             .key(&"whole")
+    ///             .value(&self.0) // We add the "whole" entry.
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -895,21 +888,22 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_map()
-    ///            .key(&"whole").value(&self.0) // We add the "whole" entry.
-    ///            .finish()
+    ///             .key(&"whole")
+    ///             .value(&self.0) // We add the "whole" entry.
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -943,23 +937,23 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_map()
-    ///            // We map our vec so each entries' first field will become
-    ///            // the "key".
-    ///            .entries(self.0.iter().map(|&(ref k, ref v)| (k, v)))
-    ///            .finish()
+    ///             // We map our vec so each entries' first field will become
+    ///             // the "key".
+    ///             .entries(self.0.iter().map(|&(ref k, ref v)| (k, v)))
+    ///             .finish()
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"A\": 10, \"B\": 11}",
     /// );
     /// ```
@@ -986,21 +980,21 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// # Examples
     ///
     /// ```rust
+    /// use debug2::{pprint, Debug, Formatter};
     /// use std::fmt;
-    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
     /// impl Debug for Foo {
     ///     fn fmt(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
     ///         fmt.debug_map()
-    ///            .entries(self.0.iter().map(|&(ref k, ref v)| (k, v)))
-    ///            .finish() // Ends the struct formatting.
+    ///             .entries(self.0.iter().map(|&(ref k, ref v)| (k, v)))
+    ///             .finish() // Ends the struct formatting.
     ///     }
     /// }
     ///
     /// assert_eq!(
-    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint(Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"A\": 10, \"B\": 11}",
     /// );
     /// ```
