@@ -71,8 +71,9 @@ impl fmt::Write for PadAdapter<'_, '_> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use std::fmt;
+/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo {
 ///     bar: i32,
@@ -89,7 +90,7 @@ impl fmt::Write for PadAdapter<'_, '_> {
 /// }
 ///
 /// assert_eq!(
-///     format!("{:?}", Foo { bar: 10, baz: "Hello World".to_string() }),
+///     pprint( Foo { bar: 10, baz: "Hello World".to_string() }),
 ///     "Foo { bar: 10, baz: \"Hello World\" }",
 /// );
 /// ```
@@ -152,7 +153,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     pprint(Bar { bar: 10, another: "Hello World".to_string() }),
+    ///     pprint( Bar { bar: 10, another: "Hello World".to_string() }),
     ///     "Bar { bar: 10, another: \"Hello World\", not_existing_field: 1 }",
     /// );
     /// ```
@@ -188,8 +189,9 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -205,7 +207,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Bar { bar: 10, hidden: 1.0 }),
+    ///     pprint( Bar { bar: 10, hidden: 1.0 }),
     ///     "Bar { bar: 10, .. }",
     /// );
     /// ```
@@ -233,8 +235,9 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -252,7 +255,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Bar { bar: 10, baz: "Hello World".to_string() }),
+    ///     pprint( Bar { bar: 10, baz: "Hello World".to_string() }),
     ///     "Bar { bar: 10, baz: \"Hello World\" }",
     /// );
     /// ```
@@ -284,8 +287,9 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use std::fmt;
+/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(i32, String);
 ///
@@ -299,7 +303,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
 /// }
 ///
 /// assert_eq!(
-///     format!("{:?}", Foo(10, "Hello World".to_string())),
+///     pprint( Foo(10, "Hello World".to_string())),
 ///     "Foo(10, \"Hello World\")",
 /// );
 /// ```
@@ -331,8 +335,9 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(i32, String);
     ///
@@ -346,7 +351,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(10, "Hello World".to_string())),
+    ///     pprint( Foo(10, "Hello World".to_string())),
     ///     "Foo(10, \"Hello World\")",
     /// );
     /// ```
@@ -377,8 +382,9 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(i32, String);
     ///
@@ -393,7 +399,7 @@ impl<'a, 'b: 'a> DebugTuple<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(10, "Hello World".to_string())),
+    ///     pprint( Foo(10, "Hello World".to_string())),
     ///     "Foo(10, \"Hello World\")",
     /// );
     /// ```
@@ -458,8 +464,9 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use std::fmt;
+/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<i32>);
 ///
@@ -470,7 +477,7 @@ impl<'a, 'b: 'a> DebugInner<'a, 'b> {
 /// }
 ///
 /// assert_eq!(
-///     format!("{:?}", Foo(vec![10, 11])),
+///     pprint( Foo(vec![10, 11])),
 ///     "{10, 11}",
 /// );
 /// ```
@@ -497,8 +504,9 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
@@ -512,7 +520,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
     ///     "{[10, 11], [12, 13]}",
     /// );
     /// ```
@@ -526,8 +534,9 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
@@ -541,7 +550,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
     ///     "{10, 11, 12, 13}",
     /// );
     /// ```
@@ -561,8 +570,9 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>);
     ///
@@ -575,7 +585,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11])),
+    ///     pprint( Foo(vec![10, 11])),
     ///     "{10, 11}",
     /// );
     /// ```
@@ -596,8 +606,9 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use std::fmt;
+/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<i32>);
 ///
@@ -608,7 +619,7 @@ impl<'a, 'b: 'a> DebugSet<'a, 'b> {
 /// }
 ///
 /// assert_eq!(
-///     format!("{:?}", Foo(vec![10, 11])),
+///     pprint( Foo(vec![10, 11])),
 ///     "[10, 11]",
 /// );
 /// ```
@@ -634,8 +645,9 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
@@ -649,7 +661,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
     ///     "[[10, 11], [12, 13]]",
     /// );
     /// ```
@@ -663,8 +675,9 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>, Vec<u32>);
     ///
@@ -678,7 +691,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11], vec![12, 13])),
+    ///     pprint( Foo(vec![10, 11], vec![12, 13])),
     ///     "[10, 11, 12, 13]",
     /// );
     /// ```
@@ -698,8 +711,9 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<i32>);
     ///
@@ -712,7 +726,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![10, 11])),
+    ///     pprint( Foo(vec![10, 11])),
     ///     "[10, 11]",
     /// );
     /// ```
@@ -733,8 +747,9 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use std::fmt;
+/// use debug2::{Debug, Formatter, pprint};
 ///
 /// struct Foo(Vec<(String, i32)>);
 ///
@@ -745,7 +760,7 @@ impl<'a, 'b: 'a> DebugList<'a, 'b> {
 /// }
 ///
 /// assert_eq!(
-///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
 ///     "{\"A\": 10, \"B\": 11}",
 /// );
 /// ```
@@ -777,8 +792,9 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
@@ -791,7 +807,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -813,8 +829,9 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
@@ -827,7 +844,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -877,8 +894,9 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
@@ -891,7 +909,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"whole\": [(\"A\", 10), (\"B\", 11)]}",
     /// );
     /// ```
@@ -924,8 +942,9 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
@@ -940,7 +959,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"A\": 10, \"B\": 11}",
     /// );
     /// ```
@@ -966,8 +985,9 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Foo(Vec<(String, i32)>);
     ///
@@ -980,7 +1000,7 @@ impl<'a, 'b: 'a> DebugMap<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
+    ///     pprint( Foo(vec![("A".to_string(), 10), ("B".to_string(), 11)])),
     ///     "{\"A\": 10, \"B\": 11}",
     /// );
     /// ```
