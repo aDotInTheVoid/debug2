@@ -1,6 +1,6 @@
 # Debug2
 
-`debug2` is a pritty printing crate based on `std::fmt`
+`debug2` is a pretty printing crate based on `std::fmt`
 
 ## Why not just use `Debug`
 
@@ -147,7 +147,7 @@ You can also manually implement `Debug`, using a subset of the API in `std::fmt:
 ## Limitations
 - Speed: While doing this will always mean extra work, this crate is paticularly inefficient.
 - Prevalence: Almost every type implements `std::fmt::Debug`, but not this type
-- The derive isn't great: The deive macro for `std::fmt::Debug` works everywhere. This one
+- The derive isn't great: The derive macro for `std::fmt::Debug` works everywhere. This one
   is kind of basic, and will probably not work everywhere it should.
 
 ## Prior art

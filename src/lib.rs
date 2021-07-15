@@ -1,6 +1,6 @@
 #![warn(missing_docs)]
 
-//! `debug2` is a pritty printing crate based on [`std::fmt`]
+//! `debug2` is a pretty printing crate based on [`std::fmt`]
 //!
 //! # Why not just use [`Debug`]
 //!
@@ -150,7 +150,7 @@
 //! # Limitations
 //! - Speed: While doing this will always mean extra work, this crate is paticularly inefficient.
 //! - Prevalence: Almost every type implements [`std::fmt::Debug`], but not this type
-//! - The derive isn't great: The deive macro for [`std::fmt::Debug`] works everywhere. This one
+//! - The derive isn't great: The derive macro for [`std::fmt::Debug`] works everywhere. This one
 //!   is kind of basic, and will probably not work everywhere it should.
 
 use std::fmt::{Debug as StdDebug, Error, Result, Write};
@@ -163,7 +163,7 @@ pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 pub use derive::*;
 
 const MAX_LEN: usize = 80;
-/// Pritty Printed Formatting
+/// Pretty Printed Formatting
 ///
 /// This is much like [`std::fmt::Debug`], but it supports much better multiline output
 ///
@@ -268,7 +268,7 @@ fn pprint_mode<T: Debug>(x: T, mode: Mode) -> std::result::Result<String, Error>
     Ok(out)
 }
 
-/// Pritty Print an item to a string, or return an error
+/// Pretty Print an item to a string, or return an error
 ///
 /// ```rust
 /// use debug2::{pprint_checked, Debug, Formatter};
@@ -301,7 +301,7 @@ pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
     }
 }
 
-/// Pritty Print an item to a string
+/// Pretty Print an item to a string
 ///
 /// ```rust
 /// use debug2::pprint;
