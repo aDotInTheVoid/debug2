@@ -5,7 +5,7 @@
 //! # Why not just use [`Debug`]
 //!
 //! The [`Debug`] trait is good, but the problem is it is not very good at nested stuctures.
-//! Either you use `{:?}` and get a line that is too long, or a to many lines with not enough
+//! Either you use `{:?}` and get a line that is too long, or too many lines with not enough
 //! information on them.
 //!
 //! ```rust
@@ -230,7 +230,9 @@ const MAX_LEN: usize = 80;
 pub trait Debug {
     /// Formats the value using the given formatter.
     ///
-    /// See the trait documentation for more.
+    /// Note that this may be called more than once for any invocation of `pprint`, if you do
+    /// side effects in this, make sure they are idempotent. In general, don't relly on how often
+    /// this function is called, as it may change in a future release.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result;
 }
 
@@ -319,6 +321,14 @@ pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
 /// ]"
 /// );
 /// ```
+///
+/// Note that while this takes a `T`, you can also pass a reference due to the
+/// `impl<T: Debug> Debug for `&T`
+///
+/// # Panics
+///
+/// This will panic if `<T as Debug>::fmt` returns an error
+///
 pub fn pprint<T: Debug>(x: T) -> String {
     pprint_checked(x).unwrap()
 }

@@ -5,7 +5,7 @@
 ## Why not just use `Debug`
 
 The `Debug` trait is good, but the problem is it is not very good at nested stuctures.
-Either you use `{:?}` and get a line that is too long, or a to many lines with not enough
+Either you use `{:?}` and get a line that is too long, or too many lines with not enough
 information on them.
 
 ```rust
