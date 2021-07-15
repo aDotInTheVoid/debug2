@@ -148,7 +148,7 @@ You can also manually implement `Debug`, using a subset of the API in `std::fmt:
 - Speed: While doing this will always mean extra work, this crate is paticularly inefficient.
 - Prevalence: Almost every type implements `std::fmt::Debug`, but not this type
 - The derive isn't great: The deive macro for `std::fmt::Debug` works everywhere. This one
-  is kind of basic, and will probably now work everywhere it should.
+  is kind of basic, and will probably not work everywhere it should.
 
 ## Prior art
 
