@@ -14,14 +14,9 @@ let complex_structure = vec![
     vec![Some(2), None],
     vec![Some(4), Some(7)],
     vec![Some(1), Some(2), Some(3), None],
-    vec![Some(2), None],
-    vec![Some(4), Some(7)],
-    vec![Some(1), Some(2), Some(3), None],
-    vec![Some(2), None],
-    vec![Some(4), Some(7)],
 ];
 let one_line = format!("{:?}", complex_structure);
-assert_eq!(one_line, "[[Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)], [Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)], [Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)]]");
+assert_eq!(one_line, "[[Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)], [Some(1), Some(2), Some(3), None]]");
 let many_lines = format!("{:#?}", complex_structure);
 assert_eq!(many_lines, "[
     [
@@ -61,46 +56,6 @@ assert_eq!(many_lines, "[
             3,
         ),
         None,
-    ],
-    [
-        Some(
-            2,
-        ),
-        None,
-    ],
-    [
-        Some(
-            4,
-        ),
-        Some(
-            7,
-        ),
-    ],
-    [
-        Some(
-            1,
-        ),
-        Some(
-            2,
-        ),
-        Some(
-            3,
-        ),
-        None,
-    ],
-    [
-        Some(
-            2,
-        ),
-        None,
-    ],
-    [
-        Some(
-            4,
-        ),
-        Some(
-            7,
-        ),
     ],
 ]")
 ```
