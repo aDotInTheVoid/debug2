@@ -119,7 +119,7 @@ fn write_maybe_short<T: Debug + ?Sized>(val: &T, writer: &mut Formatter) -> fmt:
     // TODO: Early return this if we run out of space
     let as_str = crate::flatprint_checked(val)?;
     // TODO: Make this configurable and keep track of current depth.
-    if as_str.len() <= 80 {
+    if as_str.len() <= crate::MAX_LEN {
         writer.buf.write_str(&as_str)
     } else {
         val.fmt(writer)
@@ -131,8 +131,9 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use std::fmt;
+    /// use debug2::{Debug, Formatter, pprint};
     ///
     /// struct Bar {
     ///     bar: i32,
@@ -151,7 +152,7 @@ impl<'a, 'b: 'a> DebugStruct<'a, 'b> {
     /// }
     ///
     /// assert_eq!(
-    ///     format!("{:?}", Bar { bar: 10, another: "Hello World".to_string() }),
+    ///     pprint(Bar { bar: 10, another: "Hello World".to_string() }),
     ///     "Bar { bar: 10, another: \"Hello World\", not_existing_field: 1 }",
     /// );
     /// ```

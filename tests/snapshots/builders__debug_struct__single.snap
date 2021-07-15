@@ -3,6 +3,4 @@ source: tests/builders.rs
 expression: pprint(Foo)
 
 ---
-Foo {
-    bar: true,
-}
+Foo { bar: true }

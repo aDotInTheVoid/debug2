@@ -3,7 +3,4 @@ source: tests/builders.rs
 expression: pprint(Entry)
 
 ---
-{
-    "bar": true,
-    10: "10/20",
-}
+{"bar": true, 10: "10/20"}

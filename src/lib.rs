@@ -7,6 +7,8 @@ pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 
 pub use derive::*;
 
+const MAX_LEN: usize = 80;
+
 pub trait Debug {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result;
 }
@@ -23,23 +25,26 @@ enum Mode {
 }
 
 fn flatprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
+    pprint_mode(x, Mode::Flat)
+}
+
+fn pprint_mode<T: Debug>(x: T, mode: Mode) -> std::result::Result<String, Error> {
     let mut out = String::new();
     let mut f = Formatter {
         buf: &mut out,
-        mode: Mode::Flat,
+        mode,
     };
     x.fmt(&mut f)?;
     Ok(out)
 }
 
 pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
-    let mut out = String::new();
-    let mut f = Formatter {
-        buf: &mut out,
-        mode: Mode::Pretty,
-    };
-    x.fmt(&mut f)?;
-    Ok(out)
+    let flat = flatprint_checked(&x)?;
+    if flat.len() <= MAX_LEN {
+        Ok(flat)
+    } else {
+        pprint_mode(x, Mode::Pretty)
+    }
 }
 
 pub fn pprint<T: Debug>(x: T) -> String {
