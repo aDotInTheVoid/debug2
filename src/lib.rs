@@ -1,3 +1,158 @@
+#![warn(missing_docs)]
+
+//! `debug2` is a pritty printing crate based on [`std::fmt`]
+//!
+//! # Why not just use [`Debug`]
+//!
+//! The [`Debug`] trait is good, but the problem is it is not very good at nested stuctures.
+//! Either you use `{:?}` and get a line that is too long, or a to many lines with not enough
+//! information on them.
+//!
+//! ```rust
+//! let complex_structure = vec![
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//! ];
+//!
+//! let one_line = format!("{:?}", complex_structure);
+//!
+//! assert_eq!(one_line, "[[Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)], [Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)], [Some(1), Some(2), Some(3), None], [Some(2), None], [Some(4), Some(7)]]");
+//!
+//! let many_lines = format!("{:#?}", complex_structure);
+//!
+//! assert_eq!(many_lines, "[
+//!     [
+//!         Some(
+//!             1,
+//!         ),
+//!         Some(
+//!             2,
+//!         ),
+//!         Some(
+//!             3,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             2,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             4,
+//!         ),
+//!         Some(
+//!             7,
+//!         ),
+//!     ],
+//!     [
+//!         Some(
+//!             1,
+//!         ),
+//!         Some(
+//!             2,
+//!         ),
+//!         Some(
+//!             3,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             2,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             4,
+//!         ),
+//!         Some(
+//!             7,
+//!         ),
+//!     ],
+//!     [
+//!         Some(
+//!             1,
+//!         ),
+//!         Some(
+//!             2,
+//!         ),
+//!         Some(
+//!             3,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             2,
+//!         ),
+//!         None,
+//!     ],
+//!     [
+//!         Some(
+//!             4,
+//!         ),
+//!         Some(
+//!             7,
+//!         ),
+//!     ],
+//! ]")
+//! ```
+//!
+//! `pprint` aims to be a third alternative, that gets this correct.
+//!
+//! ```rust
+//! use debug2::pprint;
+//!
+//! let complex_structure = vec![
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//!     vec![Some(1), Some(2), Some(3), None],
+//!     vec![Some(2), None],
+//!     vec![Some(4), Some(7)],
+//! ];
+//!
+//! assert_eq!(
+//!     pprint(complex_structure),
+//!     "\
+//! [
+//!     [Some(1), Some(2), Some(3), None],
+//!     [Some(2), None],
+//!     [Some(4), Some(7)],
+//!     [Some(1), Some(2), Some(3), None],
+//!     [Some(2), None],
+//!     [Some(4), Some(7)],
+//!     [Some(1), Some(2), Some(3), None],
+//!     [Some(2), None],
+//!     [Some(4), Some(7)],
+//! ]"
+//! );
+//! ```
+//!
+//! To use, derive [`Debug`] for your types, and then use [`pprint`] to print them.
+//!
+//! You can also manually implement [`Debug`], using a subset of the API in [`std::fmt::Formatter`]
+//!
+//! # Limitations
+//! - Speed: While doing this will always mean extra work, this crate is paticularly inefficient.
+//! - Prevalence: Almost every type implements [`std::fmt::Debug`], but not this type
+//! - The derive isn't great: The deive macro for [`std::fmt::Debug`] works everywhere. This one
+//!   is kind of basic, and will probably now work everywhere it should.
+
 use std::fmt::{Debug as StdDebug, Error, Result, Write};
 
 mod builders;
@@ -8,8 +163,74 @@ pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 pub use derive::*;
 
 const MAX_LEN: usize = 80;
-
+/// Pritty Printed Formatting
+///
+/// This is much like [`std::fmt::Debug`], but it supports much better multiline output
+///
+/// # Examples
+///
+/// ```rust
+/// use debug2::{pprint, Debug};
+///
+/// #[derive(Debug)]
+/// struct Numbers {
+///     a: Vec<Vec<i32>>,
+///     b: String,
+/// }
+///
+/// let a = Numbers {
+///     a: vec![vec![10; 10]; 2],
+///     b: "FooBar".to_owned(),
+/// };
+///
+/// assert_eq!(
+///     pprint(&a),
+///     "\
+/// Numbers {
+///     a: [
+///         [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+///         [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+///     ],
+///     b: \"FooBar\",
+/// }"
+/// );
+/// ```
+///
+/// You can also implement `fmt` manually, using an API much like [`std::fmt::Formatter`]
+///
+/// ```rust
+/// use debug2::{pprint, Debug, Formatter};
+/// use std::fmt;
+///
+/// struct Chunked10([u8; 100]);
+///
+/// impl Debug for Chunked10 {
+///     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+///         f.debug_list().entries(self.0.chunks(10)).finish()
+///     }
+/// }
+///
+/// assert_eq!(
+///     pprint(Chunked10([0; 100])),
+///     "\
+/// [
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+///     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+/// ]"
+/// );
+/// ```
 pub trait Debug {
+    /// Formats the value using the given formatter.
+    ///
+    /// See the trait documentation for more.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result;
 }
 
@@ -47,6 +268,30 @@ fn pprint_mode<T: Debug>(x: T, mode: Mode) -> std::result::Result<String, Error>
     Ok(out)
 }
 
+/// Pritty Print an item to a string, or return an error
+///
+/// ```rust
+/// use debug2::{pprint_checked, Debug, Formatter};
+/// use std::fmt;
+///
+/// struct Good;
+/// struct Bad;
+///
+/// impl Debug for Good {
+///     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+///         f.debug_struct("Good").finish()
+///     }
+/// }
+///
+/// impl Debug for Bad {
+///     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+///         Err(fmt::Error)
+///     }
+/// }
+///
+/// assert!(pprint_checked(Good).is_ok());
+/// assert!(pprint_checked(Bad).is_err());
+/// ```
 pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
     let flat = flatprint_checked(&x)?;
     if flat.len() <= MAX_LEN {
@@ -56,6 +301,24 @@ pub fn pprint_checked<T: Debug>(x: T) -> std::result::Result<String, Error> {
     }
 }
 
+/// Pritty Print an item to a string
+///
+/// ```rust
+/// use debug2::pprint;
+///
+/// let x: Vec<Option<&[i32]>> = vec![Some(&[1; 20]), None, None, Some(&[1, 2, 3])];
+///
+/// assert_eq!(
+///     pprint(x),
+///     "\
+/// [
+///     Some([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+///     None,
+///     None,
+///     Some([1, 2, 3]),
+/// ]"
+/// );
+/// ```
 pub fn pprint<T: Debug>(x: T) -> String {
     pprint_checked(x).unwrap()
 }
