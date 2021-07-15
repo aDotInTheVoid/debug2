@@ -1,10 +1,10 @@
 # Debug2
 
-`debug2` is a pritty printing crate based on [`std::fmt`]
+`debug2` is a pritty printing crate based on `std::fmt`
 
-## Why not just use [`Debug`]
+## Why not just use `Debug`
 
-The [`Debug`] trait is good, but the problem is it is not very good at nested stuctures.
+The `Debug] trait is good, but the problem is it is not very good at nested stuctures.
 Either you use `{:?}` and get a line that is too long, or a to many lines with not enough
 information on them.
 
@@ -137,9 +137,12 @@ assert_eq!(
 );
 ```
 
-To use, derive [`Debug`] for your types, and then use [`pprint`] to print them.
+`debug2` provides a `debug2::Debug` trait, which can be derived on your types, and is implemented 
+for common types in `std`.
 
-You can also manually implement [`Debug`], using a subset of the API in [`std::fmt::Formatter`]
+Once your types implement `debug2::Debug`, you can use `debug2::pprint` to convert them to a string.
+
+You can also manually implement `Debug`, using a subset of the API in `std::fmt::Formatter`
 
 ## Limitations
 - Speed: While doing this will always mean extra work, this crate is paticularly inefficient.
