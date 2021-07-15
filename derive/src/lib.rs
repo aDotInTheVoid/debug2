@@ -2,7 +2,7 @@ use quote::quote;
 use syn::Fields;
 use synstructure::{decl_derive, AddBounds};
 
-decl_derive!([Debug, attributes(debug_skip)] => derive_debug);
+decl_derive!([Debug/*, attributes(debug_skip)*/] => derive_debug);
 
 // Based on
 // https://github.com/panicbit/custom_debug/blob/master/custom_debug_derive/src/lib.rs
