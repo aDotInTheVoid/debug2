@@ -115,7 +115,7 @@ mod std_impls;
 
 pub use builders::{DebugList, DebugMap, DebugSet, DebugStruct, DebugTuple};
 
-pub use derive::*;
+pub use debug2_derive::*;
 
 const MAX_LEN: usize = 80;
 /// Pretty Printed Formatting

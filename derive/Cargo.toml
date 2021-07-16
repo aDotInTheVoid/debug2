@@ -1,7 +1,10 @@
 [package]
-name = "derive"
+name = "debug2-derive"
 version = "0.1.0"
 edition = "2018"
+description = "Derive macro for debug2"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/aDotInTheVoid/debug2/"
 
 [lib]
 proc-macro = true
