@@ -1,5 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, LinkedList, VecDeque};
 use std::ops::Deref;
+use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::{Debug, Formatter, Result};
 
@@ -31,6 +33,42 @@ impl<T: ?Sized + Debug> Debug for &T {
 impl<T: ?Sized + Debug> Debug for &mut T {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         Debug::fmt(&**self, f)
+    }
+}
+
+impl<T: ?Sized + Debug> Debug for Box<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
+    }
+}
+
+impl<T: Debug, const N: usize> Debug for [T; N] {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&self[..], f)
+    }
+}
+
+impl<T: ?Sized + Debug> Debug for Arc<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
+    }
+}
+
+impl<T: ?Sized + Debug> Debug for Rc<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&**self, f)
+    }
+}
+
+impl<T: ?Sized> Debug for *const T {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.write_str(&format!("{:?}", self))
+    }
+}
+
+impl<T: ?Sized> Debug for *mut T {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        Debug::fmt(&(self as *const _), f)
     }
 }
 
