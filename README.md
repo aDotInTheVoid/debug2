@@ -1,4 +1,12 @@
+# Depricated, do not use.
+
+This is depricated in favor of [debug3](https://lib.rs/crates/debug3), whose name makes more sense, uses a better algorithm to determine breaks,
+and will be reciving active maintenence. The public API is (as of the time of writing) basicly the same. Please use it instead.
+
+---
+
 # Debug2
+
 
 `debug2` is a pretty printing crate based on `std::fmt`
 
